@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>spelling bee</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            background: #0a0a0f;
+            color: #c8a84a;
+            font-family: Georgia, serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            text-align: center;
+            max-width: 600px;
+            padding: 2rem;
+        }
+
+        h1 {
+            font-size: 2rem;
+            letter-spacing: 0.3em;
+            margin-bottom: 0.5rem;
+            color: #e8c86a;
+        }
+
+        .subtitle {
+            font-size: 0.85rem;
+            letter-spacing: 0.2em;
+            color: #8a7040;
+            margin-bottom: 3rem;
+            text-transform: uppercase;
+        }
+
+        .works {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .work {
+            border: 1px solid #3a2a10;
+            padding: 1.5rem 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .work:hover {
+            border-color: #c8a84a;
+        }
+
+        .work h2 {
+            font-size: 0.9rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+        }
+
+        .work p {
+            font-size: 0.8rem;
+            color: #6a5a30;
+            line-height: 1.6;
+        }
+
+        .contact {
+            font-size: 0.8rem;
+            color: #4a3a20;
+            letter-spacing: 0.15em;
+        }
+
+        .contact a {
+            color: #8a7040;
+            text-decoration: none;
+        }
+
+        .contact a:hover {
+            color: #c8a84a;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        
+        <h1>novel stuff</h1>
+        <p class="subtitle">by natural keliodoscopic method.</p>
+
+        <div class="works">
+            <div class="work">
+                <h2>Spagyrics</h2>
+                <p>separation and recombination; salt, sulfur, and mercury.</p>
+            </div>
+            <div class="work">
+                <h2>Ceramics</h2>
+                <p>sea foraged clay, wood fired with organics.</p>
+            </div>
+            <div class="work">
+                <h2>Herba</h2>
+                <p>plant preparations and notable uses.</p>
+            </div>
+            <div class="work">
+                <h2>Music</h2>
+                <p>is math.</p>
+            </div>
+        </div>
+
+        <p class="contact">
+            Get in touch · <a href="mailto:jackahitchins@gmail.com">jackahitchins@gmail.com</a>
+        </p>
+
+    </div>
+</body>
+</html>
