@@ -53,8 +53,8 @@
     
     .rain-drop {
       position: absolute;
-      width: 5px;
-      height: 10px;
+      width: 15px;
+      height: 25px;
       background: gold;
       border-radius: 50%;
       animation: rain 2s linear infinite;
@@ -154,7 +154,7 @@ document.querySelectorAll('#sidebar-nav .tag-cloud a').forEach(anchor => {
   <script>
     function createRainDrops() {
       const container = document.querySelector('.container');
-      for (let i = 0; i < 50; i++) {
+      for (let i = 0; i < 10; i++) {
         const rainDrop = document.createElement('div');
         rainDrop.classList.add('rain-drop');
         // Position the rain drop randomly
