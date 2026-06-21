@@ -8,7 +8,7 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body {
-            background: #0a0a0f;
+            background: #232335;
             color: #c8a84a;
             font-family: Georgia, serif;
             min-height: 100vh;
@@ -20,19 +20,19 @@
   list-style: none;
   position: absolute;
   text-align: center;
-  // Hide initially and animate on appearance
+    /* Hide initially and animate on appearance */
   opacity: 0;
   transform: translateY(-100%);
   transition: all 0.5s ease-in-out;
 }
 
 #title li {
-  // Set delay to create a randomized falling effect
-  animation-delay: calc(0.3 * var(--index) * s);
-  --index: 0;
+    /* Set delay to create a randomized falling effect */
+    animation-delay: calc(0.3s * var(--index));
+    --index: 0;
 }
 
-// Define animations for appearing and falling
+/* Define animations for appearing and falling */
 @keyframes appear {
   0% { opacity: 0; }
   100% { opacity: 1; }
