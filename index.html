@@ -1,175 +1,167 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>spelling bee</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        body {
-            background: #232335;
-            color: #c8a84a;
-            font-family: Georgia, serif;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-    #title {
-  list-style: none;
-  position: absolute;
-  text-align: center;
-    /* Hide initially and animate on appearance */
-  opacity: 0;
-  transform: translateY(-100%);
-  transition: all 0.5s ease-in-out;
-}
+  <meta charset="UTF-8">
+  <title>novelty</title>
+  <style>
+    /* CSS for the blog */
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'helvetica', serif;
+      background-color: #175f17; /* Green background color */
+    }
 
-#title li {
-    /* Set delay to create a randomized falling effect */
-    animation-delay: calc(0.3s * var(--index));
-    --index: 0;
-}
+    .container {
+      width: 80%;
+      margin: auto;
+      overflow: hidden;
+    }
 
-/* Define animations for appearing and falling */
-@keyframes appear {
-  0% { opacity: 0; }
-  100% { opacity: 1; }
-}
+    header {
+      text-align: center;
+      padding: 20px;
+      background: rgba(1, 50, 32, 0.9);
+      color: white;
+    }
 
-@keyframes fall {
-  0% { transform: translateY(0); }
-  100% { transform: translateY(100%); }
-}
-        .container {
-            text-align: center;
-            max-width: 600px;
-            padding: 2rem;
-        }
+    .sidebar {
+      width: 20%;
+      float: left;
+      margin-right: 20px;
+      background-color: #819b0c; /* Light green sidebar */
+    }
 
-        h1 {
-            font-size: 2rem;
-            letter-spacing: 0.3em;
-            margin-bottom: 0.5rem;
-            color: #e8c86a;
-        }
+    .content {
+      width: 75%;
+      float: right;
+    }
 
-        .subtitle {
-            font-size: 0.85rem;
-            letter-spacing: 0.2em;
-            color: #8a7040;
-            margin-bottom: 3rem;
-            text-transform: uppercase;
-        }
+    .post {
+      border-bottom: 1px solid #98FB98;
+      padding: 20px 0;
+      margin-bottom: 20px;
+    }
 
-        .works {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1.5rem;
-            margin-bottom: 3rem;
-        }
+    footer {
+      clear: both;
+      text-align: center;
+      padding: 20px;
+      background-color: #0f3303;
+      color: white;
+    }
+    
+    .rain-drop {
+      position: absolute;
+      width: 5px;
+      height: 10px;
+      background: gold;
+      border-radius: 50%;
+      animation: rain 2s linear infinite;
+    }
 
-        .work {
-            border: 1px solid #3a2a10;
-            padding: 1.5rem 1rem;
-            transition: border-color 0.3s;
-        }
+    @keyframes rain {
+      0% { transform: translateY(-100%) scale(1); }
+      100% { transform: translateY(100%) scale(0.7); opacity: 0; }
+    }
 
-        .work:hover {
-            border-color: #c8a84a;
-        }
+    .tag-cloud {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
 
-        .work h2 {
-            font-size: 0.9rem;
-            letter-spacing: 0.2em;
-            text-transform: uppercase;
-            margin-bottom: 0.5rem;
-        }
+    .tag-cloud li {
+      display: inline-block;
+      margin-right: 10px;
+    }
 
-        .work p {
-            font-size: 0.8rem;
-            color: #6a5a30;
-            line-height: 1.6;
-        }
+    .tag-cloud a {
+      color: white;
+      text-decoration: none;
+    }
 
-        .contact {
-            font-size: 0.8rem;
-            color: #4a3a20;
-            letter-spacing: 0.15em;
-        }
-
-        .contact a {
-            color: #8a7040;
-            text-decoration: none;
-        }
-
-        .contact a:hover {
-            color: #c8a84a;
-        }
-    </style>
+    .tag-cloud a:hover {
+      color: gold;
+    }
+  </style>
 </head>
 <body>
+  <div class="container">
+    <header>
+      <h1>novelty</h1>
+    </header>
 
-<script>
-  // Function to shuffle the list items order
-  function shuffleList(list) {
-    for (let i = list.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [list[i], list[j]] = [list[j], list[i]];
+    <div class="sidebar">
+      <!-- Sidebar content here -->
+      <ul id="sidebar-nav">
+        <li><a href="#">Home</a></li>
+        <li><a href="#">Ceramics</a></li>
+        <li><a href="#">Photography</a></li>
+        <li><a href="#">Travel</a></li>
+        <li><a href="#">Tags</a>
+          <ul class="tag-cloud">
+            <li><a href="#" data-tag="ceramics">Ceramics</a></li>
+            <li><a href="#" data-tag="photography">Photography</a></li>
+            <li><a href="#" data-tag="travel">Travel</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+
+    <div class="content">
+      <!-- Blog posts here -->
+      <div class="post" id="post-1">
+        <h2>New Post: Title Here</h2>
+        <p>Content goes here...</p>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>&copy; jack hitchins. 2026.</p>
+  </footer>
+  
+  <script>
+function filterPostsByTag(tag) {
+  const posts = document.querySelectorAll('.post');
+  posts.forEach(post => {
+    if (post.dataset.tag === tag || post.dataset.tag === '') {
+      post.style.display = 'block';
+    } else {
+      post.style.display = 'none';
     }
-  }
-
-  // Shuffle the title list when the page loads
-  shuffleList(document.querySelectorAll("#title li"));
-
-  // Add event listener for the hover effect
-  document.addEventListener("mousemove", (e) => {
-    document.getElementById("title").style.animation = "fall 1s ease-out";
   });
+}
+
+// Initial load
+filterPostsByTag(''); // Show all posts
+
+// Add event listeners to tags in the sidebar
+document.querySelectorAll('#sidebar-nav .tag-cloud a').forEach(anchor => {
+  anchor.addEventListener('click', function(e) {
+    e.preventDefault();
+    const tag = this.getAttribute('data-tag');
+    filterPostsByTag(tag);
+  });
+});
 </script>
 
-    <div class="container">
-        
-        <h1>spelling bee</h1>
-        <ul id="title" class="d-flex justify-content-center title-container">
-          <li>s</li>
-          <li>p</li>
-          <li>e</li>
-          <li>l</li>
-          <li>l</li>
-          <li>i</li>
-          <li>n</li>
-          <li>g</li>
-            <li>b</li>
-            <li>e</li>
-            <li>e</li>
-        </ul>
-        <div class="works">
-            <div class="work">
-                <h2>Spagyrics</h2>
-                <p>separation and recombination; salt, sulfur, and mercury.</p>
-            </div>
-            <div class="work">
-                <h2>Ceramics</h2>
-                <p>sea foraged clay, wood fired with organics.</p>
-            </div>
-            <div class="work">
-                <h2>Herba</h2>
-                <p>plant preparations and notable uses.</p>
-            </div>
-            <div class="work">
-                <h2>Music</h2>
-                <p>is math.</p>
-            </div>
-        </div>
+  <!-- Raindrop elements -->
+  <script>
+    function createRainDrops() {
+      const container = document.querySelector('.container');
+      for (let i = 0; i < 50; i++) {
+        const rainDrop = document.createElement('div');
+        rainDrop.classList.add('rain-drop');
+        // Position the rain drop randomly
+        rainDrop.style.left = `${Math.random() * 100}%`;
+        rainDrop.style.top = `-${20 + (i * 5)}%`; // Start above the container
+        container.appendChild(rainDrop);
+      }
+    }
 
-        <p class="contact">
-            Get in touch · <a href="mailto:jackahitchins@gmail.com">jackahitchins@gmail.com</a>
-        </p>
-
-    </div>
-</body>
-</html>
+    window.onload = createRainDrops;
+  </script>
 </body>
 </html>
