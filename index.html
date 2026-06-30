@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>amatuer speller</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+
+  <style>
+    /* ── RESET & ROOT TOKENS ─────────────────────────────────── */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg:           #0d1a0d;   /* near-black forest floor */
+      --verdant:      #1a2e1a;   /* deep moss green */
+      --card:         rgba(26, 46, 26, 0.65);
+      --gold:         #d4a017;   /* alchemical gold */
+      --gold-dim:     rgba(212, 160, 23, 0.25);
+      --parchment:    #f0e6c8;   /* aged vellum */
+      --parchment-dim:#b8a882;
+      --border:       rgba(212, 160, 23, 0.18);
+    }
+
+    html, body {
+      width: 100%;
+      min-height: 100%;
+      background: var(--bg);
+      color: var(--parchment);
+      font-family: 'Crimson Text', Georgia, serif;
+      overflow-x: hidden;
+    }
+
+    /* ── RAIN CANVAS (fixed, behind everything) ──────────────── */
+    #rain-canvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── SITE WRAPPER (sits above canvas) ────────────────────── */
+    .site-wrapper {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ── HEADER ──────────────────────────────────────────────── */
+    header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 64px 24px 36px;
+    }
+
+    /* Title: each letter is injected as a <span> by JS */
+    #site-title {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: clamp(1.8rem, 6vw, 4.2rem);
+      color: var(--gold);
+      letter-spacing: 0.1em;
+      text-align: center;
+      text-shadow: 0 0 50px rgba(212, 160, 23, 0.25);
+      line-height: 1.25;
+      /* overflow hidden so letters don't show above header while off-screen */
+      overflow: visible;
+    }
+
+    /* Individual falling letters */
+    .letter {
+      display: inline-block;
+      opacity: 0;
+      animation: letterFall 2.55s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    @keyframes letterFall {
+      0%   { transform: translateY(-90px); opacity: 0; }
+      72%  { transform: translateY(7px);   opacity: 1; }
+      88%  { transform: translateY(-3px); }
+      100% { transform: translateY(0);    opacity: 1; }
+    }
+
+    /* Tagline fades in after letters land */
+    .site-tagline {
+      margin-top: 14px;
+      font-size: 0.95rem;
+      color: var(--parchment-dim);
+      font-style: italic;
+      letter-spacing: 0.14em;
+      opacity: 0;
+      animation: fadeIn 1.2s ease 2.8s forwards;
+    }
+
+    @keyframes fadeIn { to { opacity: 1; } }
+
+    /* ── AUDIO CONTROL ───────────────────────────────────────── */
+    /*
+      HOW TO ADD YOUR MUSIC:
+      1. Place your .mp3 file in the same folder as this index.html
+      2. Change "your-track.mp3" below (in the <audio> tag) to your filename
+      3. The ♪ button will then play/pause it
+    */
+    .audio-bar {
+      margin-top: 22px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      opacity: 0;
+      animation: fadeIn 1s ease 3.2s forwards;
+    }
+
+    .audio-btn {
+      background: transparent;
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s, transform 0.1s;
+    }
+    .audio-btn:hover  { background: var(--gold-dim); }
+    .audio-btn:active { transform: scale(0.93); }
+
+    .audio-label {
+      font-size: 0.82rem;
+      color: var(--parchment-dim);
+      font-style: italic;
+      letter-spacing: 0.06em;
+    }
+
+    /* ── GOLD DIVIDER ────────────────────────────────────────── */
+    .divider {
+      width: 100px;
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--gold), transparent);
+      margin: 32px auto 0;
+    }
+
+    /* ── BLOG SECTION ────────────────────────────────────────── */
+    .blog-section {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 40px 20px 100px;
+    }
+
+    .blog-section > .section-label {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.25em;
+      color: var(--gold);
+      text-transform: uppercase;
+      text-align: center;
+      margin-bottom: 36px;
+      opacity: 0.6;
+    }
+
+    /* ── POST CARD ───────────────────────────────────────────── */
+    /*
+      TO ADD A NEW POST:
+      Copy one entire <article class="post-card"> block,
+      paste it ABOVE the existing ones, and edit the content.
+      Add the NEW badge span to the latest post only.
+    */
+    .post-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 28px 30px;
+      margin-bottom: 22px;
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      transition: border-color 0.3s;
+    }
+    .post-card:hover { border-color: rgba(212, 160, 23, 0.35); }
+
+    .post-meta {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+
+    .post-date {
+      font-size: 0.78rem;
+      color: var(--gold);
+      letter-spacing: 0.1em;
+      font-style: italic;
+    }
+
+    .post-tag {
+      font-size: 0.7rem;
+      color: var(--parchment-dim);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      border: 1px solid var(--border);
+      padding: 1px 7px;
+      border-radius: 2px;
+    }
+
+    .post-title {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: 1.05rem;
+      font-weight: 400;
+      color: var(--parchment);
+      line-height: 1.45;
+      margin-bottom: 14px;
+    }
+
+    .new-badge {
+      font-family: 'Crimson Text', serif;
+      font-size: 0.62rem;
+      background: var(--gold);
+      color: var(--bg);
+      padding: 1px 6px;
+      border-radius: 2px;
+      letter-spacing: 0.1em;
+      font-weight: 700;
+      vertical-align: middle;
+      margin-left: 8px;
+      text-transform: uppercase;
+    }
+
+    .post-body {
+      font-size: 1.05rem;
+      line-height: 1.8;
+      color: var(--parchment-dim);
+    }
+
+    .post-body p + p { margin-top: 12px; }
+    .post-body em    { color: var(--parchment); font-style: italic; }
+    .post-body strong { color: var(--parchment); font-weight: 600; }
+
+    /*
+      TO ADD AN IMAGE TO A POST:
+      1. Put the image file in your project folder
+      2. Inside .post-body, add:
+         <img src="your-image.jpg" class="post-image" alt="description">
+    */
+    .post-image {
+      width: 100%;
+      border-radius: 3px;
+      margin: 18px 0;
+      border: 1px solid var(--border);
+      display: block;
+    }
+
+    /* ── RESPONSIVE ──────────────────────────────────────────── */
+    @media (max-width: 500px) {
+      header          { padding: 48px 16px 28px; }
+      .post-card      { padding: 22px 18px; }
+      .blog-section   { padding: 30px 14px 80px; }
+    }
+
+    /* Respect reduced-motion preference */
+    @media (prefers-reduced-motion: reduce) {
+      .letter        { animation: fadeIn 0.3s ease forwards; }
+      .site-tagline,
+      .audio-bar     { animation: fadeIn 0.3s ease 0.5s forwards; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Fixed background rain canvas -->
+<canvas id="rain-canvas"></canvas>
+
+<!-- All page content -->
+<div class="site-wrapper">
+
+  <header>
+    <!-- Title letters injected by JS below -->
+    <h1 id="site-title"></h1>
+
+    <p class="site-tagline">&nbsp;·&nbsp; cosmic sympathatic novelty engine &nbsp;·&nbsp;</p>
+
+    <!-- Audio play/pause button -->
+    <div class="audio-bar">
+      <button class="audio-btn" id="audio-btn" title="Play ambient music" aria-label="Play music">▶</button>
+      <span class="audio-label">avon</span>
+    </div>
+
+    <!-- CHANGE "your-track.mp3" to your actual filename -->
+    <audio id="bg-audio" loop>
+      <source src="your-track.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="divider"></div>
+  </header>
+
+  <!-- ── BLOG ─────────────────────────────────────────────────── -->
+  <main class="blog-section">
+
+    <p class="section-label">Thunder under Mountain</p>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         NEWEST POST GOES AT THE TOP — paste new cards above this one
+         ═══════════════════════════════════════════════════════════ -->
+
+    <article class="post-card">
+      <div class="post-meta">
+        <span class="post-date">June 2026</span>
+        <span class="post-tag">Spagyrics</span>
+      </div>
+      <h2 class="post-title">
+        Medicinal Mead
+        <span class="new-badge">New</span>
+      </h2>
+      <div class="post-body">
+        <p>
+          Mead brewing, fermentation, druid mead and mead as menstruum.
+        </p>
+        <p>
+          
+        </p>
+        <!-- Example image: <img src="mead-june-2025.jpg" class="post-image" alt="Mead batch, June 2025"> -->
+      </div>
+    </article>
+
+    <article class="post-card">
+      <div class="post-meta">
+        <span class="post-date">June 2026</span>
+        <span class="post-tag">Spagyrics</span>
+      </div>
+      <h2 class="post-title">Maceration technique</h2>
+      <div class="post-body">
+        <p>
+          Aqueous, alxohol, acidics, magistries etc.
+        </p>
+      </div>
+    </article>
+
+    <article class="post-card">
+      <div class="post-meta">
+        <span class="post-date">June 2026</span>
+        <span class="post-tag">Mineral</span>
+      </div>
+      <h2 class="post-title">Foraged clay</h2>
+      <div class="post-body">
+        <p>
+          The severn estuary, which brings the second largest tide gap in the world through Weston-super-Mare, deposits an ample supply of clay
+          beside it's banks. Timed on a warm sunny day before the last high tide of the day, the deposited clay should dry as sheets easily collected
+          ready for dry processing. 
+          <img src="wildclay.jpg" class="post-image" alt="Cracks in the ground indicate clay">
+          Once collected and dried, the clay is pulverised then seived to a soft powder. For resistance to thermal expansion a temp can be added between 10-25%
+          ratio to clay; Sand, charcoal, grog, these buffer against breakage while heating. 
+        </p>
+      </div>
+    </article>
+
+  </main>
+</div><!-- /.site-wrapper -->
+
+
+<script>
+  // ═══════════════════════════════════════════════════════════════════
+  //  PIXEL RAIN
+  // ═══════════════════════════════════════════════════════════════════
+  const canvas = document.getElementById('rain-canvas');
+  const ctx    = canvas.getContext('2d');
+
+  // Keep canvas full-screen on resize
+  function resizeCanvas() {
+    canvas.width  = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  resizeCanvas();
+  window.addEventListener('resize', () => { resizeCanvas(); spawnDrops(); });
+
+  const GRID = 9; // all pixels snap to a 10px grid
+  let drops  = [];
+
+  function spawnDrops() {
+    const cols  = Math.floor(canvas.width / GRID);
+    const count = Math.min(60, Math.floor(cols * 0.18)); // ~18% of columns occupied
+
+    drops = Array.from({ length: count }, () => ({
+      col:    Math.floor(Math.random() * cols),
+      y:      Math.random() * -canvas.height,          // stagger start positions
+      speed:  0.55 + Math.random() * 0.85,              // slow cascade
+      trail:  3 + Math.floor(Math.random() * 5),        // how many pixels in tail
+      px:     GRID * (1 + Math.floor(Math.random() * 2)), // pixel size: 10 or 20
+      alpha:  0.2  + Math.random() * 0.5,               // base opacity
+    }));
+  }
+  spawnDrops();
+
+  function animateRain() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    drops.forEach(drop => {
+      // Draw the leading pixel and its fading trail
+      for (let i = 0; i < drop.trail; i++) {
+        const a = drop.alpha * (1 - i / drop.trail);
+        if (a < 0.03) continue;
+        ctx.fillStyle = `rgba(212,160,23,${a.toFixed(3)})`;
+        const x = drop.col * GRID;
+        // Snap y to pixel grid so it looks blocky/pixel-art
+        const y = Math.floor((drop.y - i * drop.px) / drop.px) * drop.px;
+        ctx.fillRect(x, y, drop.px - 1, drop.px - 1);
+      }
+
+      drop.y += drop.speed;
+
+      // Reset when fully below screen
+      if (drop.y - drop.trail * drop.px > canvas.height) {
+        drop.y    = -drop.px;
+        drop.col  = Math.floor(Math.random() * (canvas.width / GRID));
+        drop.speed = 0.35 + Math.random() * 0.85;
+      }
+    });
+
+    requestAnimationFrame(animateRain);
+  }
+
+  animateRain();
+
+  // ═══════════════════════════════════════════════════════════════════
+  //  TITLE: letters fall one by one
+  // ═══════════════════════════════════════════════════════════════════
+  const titleText = "amatuer speller";
+  const titleEl   = document.getElementById('site-title');
+
+  // Build one <span> per character, each with a staggered delay
+  titleText.split('').forEach((char, i) => {
+    const span = document.createElement('span');
+    span.className   = 'letter';
+    span.textContent = char === ' ' ? '\u00A0' : char; // preserve the space
+    span.style.animationDelay = `${0.4 + i * 0.09}s`;  // tweak the 0.09 to speed up / slow down
+    titleEl.appendChild(span);
+  });
+
+  // ═══════════════════════════════════════════════════════════════════
+  //  AUDIO PLAYER
+  //  → Replace "your-track.mp3" in the <audio> tag above with your file
+  // ═══════════════════════════════════════════════════════════════════
+  const audioBtn = document.getElementById('audio-btn');
+  const audio    = document.getElementById('bg-audio');
+  let   isPlaying = false;
+
+  audioBtn.addEventListener('click', () => {
+    if (isPlaying) {
+      audio.pause();
+      audioBtn.textContent  = '▶';
+      audioBtn.title        = 'Play ambient music';
+    } else {
+      audio.play().catch(() => {
+        // Autoplay blocked — browser needs a user gesture first (which this click is).
+        // If it still fails, the audio src is likely missing or wrong path.
+        console.warn('Audio play failed. Check that your .mp3 file is in the same folder.');
+      });
+      audioBtn.textContent = '⏸';
+      audioBtn.title       = 'Pause';
+    }
+    isPlaying = !isPlaying;
+  });
+</script>
+
+</body>
+</html>
